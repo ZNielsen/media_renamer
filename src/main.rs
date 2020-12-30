@@ -9,12 +9,12 @@ fn main() {
     let target_dir = Path::new(&args[1]);
     println!("target_dir is {:?}", target_dir);
 
-    // Make the map
-    let name_edge_map: HashSet<&'static str> =
-        ["4k", "1080p", "720p"].iter().cloned().collect();
-    let capitalize_exclusion_map: HashSet<&'static str> =
+    // Make the sets
+    let name_edge_map: HashSet<String> =
+        ["4k", "1080p", "720p"].iter().map(|val| String::from(*val)).collect();
+    let capitalize_exclusion_map: HashSet<String> =
         ["and", "at", "around", "by", "after", "along", "for", "from", "of", "on", "the", "to", "with", "without"]
-        .iter().cloned().collect();
+        .iter().map(|val| String::from(*val)).collect();
 
     let dir = Path::read_dir(target_dir).unwrap();
     for file_res in dir {
@@ -26,11 +26,11 @@ fn main() {
             let ext = Path::new(&name).extension().unwrap();
             let mut new_name_vec = Vec::new();
             for piece in split {
-                if !name_edge_map.contains(piece) {
+                if !name_edge_map.contains(&piece.to_lowercase()) {
                     let mut do_cap = true;
                     if !new_name_vec.is_empty() {
                         new_name_vec.push(" ".to_owned());
-                        if capitalize_exclusion_map.contains(piece) {
+                        if capitalize_exclusion_map.contains(&piece.to_lowercase()) {
                             do_cap = false;
                         }
                     }
