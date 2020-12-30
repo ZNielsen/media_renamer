@@ -48,16 +48,15 @@ fn main() {
                     break;
                 }
             }
-            // Wrap the last value (the year) in parenthesis
-            let year = format!("({})", new_name_vec.pop().unwrap());
-            new_name_vec.push(year);
-
-            // Put the extension back
-            new_name_vec.push(format!(".{}", ext.to_str().unwrap()));
 
             // If we didn't hit an expected delimiter, skip out on renaming
             if do_rename {
-                new_name_vec.push(ext.to_str().unwrap().to_owned());
+                // Wrap the last value (the year) in parenthesis
+                let year = format!("({})", new_name_vec.pop().unwrap());
+                new_name_vec.push(year);
+
+                // Put the extension back
+                new_name_vec.push(format!(".{}", ext.to_str().unwrap()));
 
                 let new_name: String = new_name_vec.iter().cloned().collect();
                 let new_path_dir = target_dir.clone();
