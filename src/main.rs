@@ -19,6 +19,7 @@ fn main() {
     let dir = Path::read_dir(target_dir).unwrap();
     for file_res in dir {
        let file = file_res.unwrap();
+       let mut do_rename = false;
        if file.file_type().unwrap().is_file() {
             let name = file.file_name().into_string().unwrap();
             let split = name.split(".");
@@ -43,6 +44,7 @@ fn main() {
                 }
                 else {
                     // Hit our delimiter, break out.
+                    do_rename = true;
                     break;
                 }
             }
@@ -53,15 +55,23 @@ fn main() {
             // Put the extension back
             new_name_vec.push(format!(".{}", ext.to_str().unwrap()));
 
-            let new_name: String = new_name_vec.iter().cloned().collect();
-            let new_path_dir = target_dir.clone();
-            let new_path = new_path_dir.join(new_name);
+            // If we didn't hit an expected delimiter, skip out on renaming
+            if do_rename {
+                new_name_vec.push(ext.to_str().unwrap().to_owned());
 
-            let old_path_dir = target_dir.clone();
-            let old_path = old_path_dir.join(name);
+                let new_name: String = new_name_vec.iter().cloned().collect();
+                let new_path_dir = target_dir.clone();
+                let new_path = new_path_dir.join(new_name);
 
-            // Rename the file
-            std::fs::rename(old_path, new_path).unwrap();
+                let old_path_dir = target_dir.clone();
+                let old_path = old_path_dir.join(name);
+
+                // Rename the file
+                std::fs::rename(old_path, new_path).unwrap();
+            }
+            else {
+                println!("Not renaming file {}, not all criteria met", name);
+            }
        }
     }
 }
