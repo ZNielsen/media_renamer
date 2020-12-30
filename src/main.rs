@@ -5,7 +5,9 @@ use std::env;
 fn main() {
     let args: Vec<String> = env::args().collect();
     println!("args: {:?}", args);
-    let target_dir = Path::new(&args[0]);
+    assert!(args.len() > 1);
+    let target_dir = Path::new(&args[1]);
+    println!("target_dir is {:?}", target_dir);
 
     // Make the map
     let name_edge_map: HashSet<&'static str> =
@@ -44,7 +46,12 @@ fn main() {
                     break;
                 }
             }
-            new_name_vec.push(ext.to_str().unwrap().to_owned());
+            // Wrap the last value (the year) in parenthesis
+            let year = format!("({})", new_name_vec.pop().unwrap());
+            new_name_vec.push(year);
+
+            // Put the extension back
+            new_name_vec.push(format!(".{}", ext.to_str().unwrap()));
 
             let new_name: String = new_name_vec.iter().cloned().collect();
             let new_path_dir = target_dir.clone();
